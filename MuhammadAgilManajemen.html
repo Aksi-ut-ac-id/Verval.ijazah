@@ -7,6 +7,9 @@
 
 <title>Verifikasi Ijazah Elektronik</title>
 
+<meta name="keywords" content="Universitas Terbuka, UT, Verifikasi Ijazah, Ijazah Elektronik, Validasi Ijazah, Cek Ijazah UT, BAN-PT, BSSN, BSrE">
+<meta name="description" content="Verifikasi ijazah elektronik Universitas Terbuka.">
+
 <style>
 
 *{
@@ -20,10 +23,56 @@ body{
 background:#f4f6fb;
 }
 
+/* LOADER FULLSCREEN */
+#loader{
+position:fixed;
+width:100%;
+height:100%;
+background:#ffffff;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+z-index:9999;
+}
+
+/* TAMBAHAN LOGO LOADER */
+.loader-logo{
+width:80px;
+margin-bottom:15px;
+background:white;
+padding:6px;
+border-radius:10px;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+.progress-box{
+width:250px;
+height:6px;
+background:#eee;
+border-radius:10px;
+overflow:hidden;
+margin-top:15px;
+}
+
+.progress{
+height:100%;
+width:0%;
+background:#4b39d3;
+transition:width 0.4s;
+}
+
+.status-text{
+margin-top:10px;
+font-size:14px;
+color:#555;
+}
+
 .container{
 max-width:900px;
 margin:auto;
 padding:15px;
+display:none;
 }
 
 .header{
@@ -40,6 +89,15 @@ background:white;
 padding:6px;
 border-radius:10px;
 margin-bottom:10px;
+}
+
+.badge{
+display:inline-block;
+background:#16a34a;
+padding:6px 12px;
+border-radius:20px;
+font-size:13px;
+margin-top:8px;
 }
 
 .info{
@@ -61,6 +119,12 @@ padding:20px;
 margin-top:20px;
 border-radius:12px;
 box-shadow:0 3px 12px rgba(0,0,0,0.08);
+animation:fadeIn 0.8s ease;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(10px);}
+to{opacity:1;transform:translateY(0);}
 }
 
 .title{
@@ -112,7 +176,22 @@ font-size:14px;
 
 <body>
 
-<div class="container">
+<!-- LOADER -->
+<div id="loader">
+
+<img src="universitas-terbuka (1).png" class="loader-logo">
+
+<h3>Sistem Verifikasi Ijazah</h3>
+
+<div class="progress-box">
+<div class="progress" id="progress"></div>
+</div>
+
+<div class="status-text" id="statusText">Menghubungkan ke server...</div>
+</div>
+
+<!-- CONTENT -->
+<div class="container" id="content">
 
 <div class="header">
 
@@ -120,6 +199,8 @@ font-size:14px;
 
 <h2>Universitas Terbuka</h2>
 <p>Verifikasi Ijazah Elektronik</p>
+
+<div class="badge">STATUS: VALID</div>
 
 <div class="info">
 
@@ -147,12 +228,12 @@ Verifikasi Ijazah Elektronik
 <div class="title">VERIFIKASI IJAZAH ELEKTRONIK</div>
 
 <div class="data"><div>Nama</div><div>:</div><div>Muhammad Agil</div></div>
-<div class="data"><div>NIK</div><div>:</div><div>352209050*******2</div></div>
+<div class="data"><div>NIK</div><div>:</div><div>3522090506****02</div></div>
 <div class="data"><div>NIM</div><div>:</div><div>041601229</div></div>
 <div class="data"><div>Nomor Ijazah</div><div>:</div><div>6118702102837011</div></div>
 <div class="data"><div>Jenjang</div><div>:</div><div>Sarjana (S1)</div></div>
-<div class="data"><div>Program Studi</div><div>:</div><div>Manajemen</div></div>
-<div class="data"><div>Tanggal Lulus</div><div>:</div><div>13 Oktober 2023</div></div>
+<div class="data"><div>Program Studi</div><div>:</div><div>Sarjana Manajemen</div></div>
+<div class="data"><div>Tanggal Lulus</div><div>:</div><div> 07 Maret 2023</div></div>
 <div class="data"><div>Akreditasi</div><div>:</div><div>SK BAN-PT NO 9227/SK/BAN-PT/Ak-PPJ/VII/2021</div></div>
 
 <br>
@@ -162,17 +243,17 @@ Verifikasi Ijazah Elektronik
 
 <div><b>Rektor</b></div>
 <div>Prof. Dr. Ojat Darojat, M.Bus., Ph.D.</div>
-<div>NIP. 196610261991031001</div>
+<div>NIP.  196610261991031001</div>
 
 <br>
 
 <div><b>Dekan</b></div>
 <div>Prof. Dr. Meirani Harsasi,S.E., M.Si.</div>
-<div>NIP. 197505312001122001</div>
+<div>NIP.  197505312001122001</div>
 
 <br>
 
-<div class="data"><div>Tertanggal</div><div>:</div><div>30 Oktober 2023</div></div>
+<div class="data"><div>Tertanggal</div><div>:</div><div>01 Februari 2026</div></div>
 
 <div class="footer">
 
@@ -189,5 +270,46 @@ diterbitkan oleh Balai Sertifikasi Elektronik (BSrE) Badan Siber dan Sandi Negar
 
 </div>
 
+<script>
+
+let progress = 0;
+let bar = document.getElementById("progress");
+let text = document.getElementById("statusText");
+
+let steps = [
+"Menghubungkan ke server...",
+"Memverifikasi nomor ijazah...",
+"Mencocokkan data mahasiswa...",
+"Validasi BAN-PT...",
+"Sinkronisasi BSSN...",
+"Sinkronisasi BSrE...",
+"Verifikasi selesai ✔"
+];
+
+let i = 0;
+
+let interval = setInterval(() => {
+
+progress += 16;
+bar.style.width = progress + "%";
+
+if(i < steps.length){
+text.innerText = steps[i];
+i++;
+}
+
+if(progress >= 100){
+clearInterval(interval);
+
+setTimeout(()=>{
+document.getElementById("loader").style.display="none";
+document.getElementById("content").style.display="block";
+},500);
+}
+
+}, 700);
+
+</script>
+
 </body>
-                                            </html>
+</html>
